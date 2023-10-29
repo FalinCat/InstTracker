@@ -1,0 +1,31 @@
+﻿@page "/manage-characters"
+@inject ICharacterService _characterService
+
+
+
+<MudStack Justify="Justify.Center">
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               Class="ma-4"
+               StartIcon="@Icons.Material.Filled.Add"
+               Href="/add-character">Добавить персонажа</MudButton>
+
+    <MudList Clickable="true">
+        @foreach (var ch in characters)
+        {
+            <MudListItem Text="@ch.Name" Icon="@Icons.Material.Filled.PersonPin">
+            </MudListItem>
+        }
+
+
+    </MudList>
+</MudStack>
+@code {
+    private List<Character> characters;
+    
+    protected async override Task OnInitializedAsync()
+    {
+        characters = await _characterService.GetAllCharactersAsync();
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,31 @@
+﻿@page "/manage-instances"
+@inject IInstanceService _instanceService
+
+<MudStack Justify="Justify.Center">
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               Class="ma-4"
+               StartIcon="@Icons.Material.Filled.Add"
+               Href="/add-instance">Добавить инстанс</MudButton>
+
+    <MudList Clickable="true">
+        @foreach (var inst in instances)
+        {
+            <MudListItem>
+                <InstanceCard Instance="inst" />
+            </MudListItem>
+        }
+
+
+    </MudList>
+</MudStack>
+
+@code {
+    private List<Instance> instances;
+
+    protected async override Task OnInitializedAsync()
+    {
+        instances = await _instanceService.GetAllInstancesAsync();
+        StateHasChanged();
+    }
+}

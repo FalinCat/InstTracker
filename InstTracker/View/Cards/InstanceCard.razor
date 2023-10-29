@@ -1,0 +1,18 @@
+﻿<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@Instance.Name</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" Color="Color.Default" />
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText>Человеческое расписание</MudText>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter]
+    public Instance Instance { get; set; }
+}
