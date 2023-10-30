@@ -1,0 +1,35 @@
+﻿@page "/add-character"
+@inherits ManageCharacters
+@using System.ComponentModel.DataAnnotations;
+@using Microsoft.AspNetCore.Components.Forms
+
+@inject NavigationManager Navigation
+
+
+<EditForm Model="@Character" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+
+    <MudStack>
+        <MudTextField @bind-Value="Character.Name" Label="Введите имя персонажа" HelperText="@result" Variant="Variant.Filled" />
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Добавить персонажа</MudButton>
+    </MudStack>
+</EditForm>
+
+@code {
+    [Required]
+    private Character Character = new Character();
+    private string result { get; set; } = default!;
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+
+
+        result = await _characterService.AddCharacter(Character.Name);
+
+        if (result.Contains("добавлен"))
+        {
+            await Task.Delay(1500);
+            Navigation.NavigateTo("/manage-characters", true);
+        }
+    }
+}

@@ -1,5 +1,5 @@
 ﻿@page "/manage-instances"
-@inject IInstanceService _instanceService
+@using NCrontab;
 
 <MudStack Justify="Justify.Center">
     <MudButton Variant="Variant.Filled"
@@ -21,11 +21,15 @@
 </MudStack>
 
 @code {
-    private List<Instance> instances;
+    [Inject]
+    public IInstanceService _instanceService { get; set; } = default!;
+
+    private List<Instance> instances = new List<Instance>();
 
     protected async override Task OnInitializedAsync()
     {
-        instances = await _instanceService.GetAllInstancesAsync();
+        var task = await _instanceService.GetAllInstancesAsync();
+        instances = task.OrderBy(i => i.Name).ToList();
         StateHasChanged();
     }
 }

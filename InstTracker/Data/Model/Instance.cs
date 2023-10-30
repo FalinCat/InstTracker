@@ -8,6 +8,6 @@
 
         public string Schedule { get; set; }
 
-        public virtual List<InstanceHistory> InstancesHistory { get; set; }
+        public virtual List<InstanceHistory> InstancesHistory { get; set; } = new();
     }
 }

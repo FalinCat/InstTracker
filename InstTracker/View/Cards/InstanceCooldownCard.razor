@@ -1,0 +1,97 @@
+﻿@using System.Timers
+@using InstTracker.Services.Extensions;
+@using NCrontab;
+
+<MudCard Outlined="true" hidden="@IsHidden" Class="ma-2">
+
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@instanceName</MudText>
+        </CardHeaderContent>
+
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Done" Color="Color.Default" OnClick="MarkInstanceAsDone" />
+        </CardHeaderActions>
+    </MudCardHeader>
+
+    <MudCardContent>
+        <MudText>Осталось до отката: @timeToRecover.ToHumanReadableString()</MudText>
+        <MudText Typo="Typo.body2">Откаты: @cooldowns</MudText>
+        <MudText Typo="Typo.body2" hidden="@errorIsHidden">@doneResult</MudText>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public string instanceName { get; set; }
+    [Parameter] public string charName { get; set; }
+
+    private Instance instance { get; set; } = default!;
+
+    [Inject] ICronService _cronService { get; set; } = default!;
+    [Inject] ICharacterService _characterService { get; set; } = default!;
+    [Inject] IInstanceService _instanceService { get; set; } = default!;
+    [Inject] IHistoryService _historyService { get; set; } = default!;
+    [Inject] IDialogService DialogService { get; set; } = default!;
+
+    private bool IsHidden = false;
+    private bool errorIsHidden = true;
+    private string doneResult = string.Empty;
+    private TimeSpan timeToRecover = TimeSpan.FromSeconds(0);
+    private string cooldowns = string.Empty;
+
+    private Timer timer = new(1000);
+
+    protected async override Task OnInitializedAsync()
+    {
+        instance = await _instanceService.Find(i => i.Name == instanceName);
+
+        cooldowns = _cronService.GetDescribedCronNextRun(instance.Schedule);
+
+        Render();
+        timer.Elapsed += (sender, eventArgs) => Render();
+        timer.Start();
+
+        StateHasChanged();
+    }
+
+    private void Render()
+    {
+
+        _ = InvokeAsync(() =>
+        {
+            var nextHit = CrontabSchedule
+                .Parse(instance.Schedule)
+                .GetNextOccurrence(DateTime.Now);
+
+            timeToRecover = TimeSpan.FromMilliseconds((nextHit - DateTime.Now).TotalMilliseconds);
+            StateHasChanged();
+        });
+
+    }
+
+    public async Task MarkInstanceAsDone()
+    {
+        bool? isMarkAsDone = await DialogService.ShowMessageBox(
+            "Внимание",
+            "Пометить инстанс как пройденный?",
+            yesText: "Пройдено!", cancelText: "Отмена");
+
+        if (isMarkAsDone ?? false)
+        {
+            doneResult = await _historyService.MarkInstanceAsDone(charName, instanceName);
+            if (doneResult.Contains("пройдено"))
+            {
+                IsHidden = true;
+                StateHasChanged();
+            }
+            else
+            {
+                errorIsHidden = false;
+            }
+        }
+
+    }
+
+
+
+}

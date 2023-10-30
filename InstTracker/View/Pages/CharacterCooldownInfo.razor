@@ -1,0 +1,36 @@
+﻿@page "/char/"
+@page "/char/{charName}/"
+
+<MudStack>
+    @foreach (var inst in UndoneInstances)
+    {
+        <InstanceCooldownCard charName="@charName" instanceName="@inst.Name" />
+    }
+</MudStack>
+
+@code {
+    [Inject] IHistoryService _historyService { get; set; } = default!;
+
+    [Parameter] public string charName { get; set; } = default!;
+
+
+    private List<Instance> UndoneInstances = default!;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await Render();
+
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        await Render();
+    }
+
+    private async Task Render()
+    {
+        UndoneInstances = await _historyService.GetAllUndoneInstancesForCharacter(charName);
+        StateHasChanged();
+    }
+
+}

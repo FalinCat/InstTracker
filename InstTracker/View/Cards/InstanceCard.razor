@@ -1,18 +1,46 @@
-﻿<MudCard>
+﻿@using CronExpressionDescriptor;
+
+@inject IDialogService DialogService
+
+<MudCard Icon="@Icons.Material.Filled.PersonPin" hidden="@IsHidden">
     <MudCardHeader>
         <CardHeaderContent>
             <MudText Typo="Typo.h6">@Instance.Name</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" Color="Color.Default" />
+            <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" Color="Color.Default" OnClick="DeleteInstance" />
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
-        <MudText>Человеческое расписание</MudText>
+        <MudText Typo="Typo.body2">Откаты: @_cronService.GetDescribedCronNextRun(Instance.Schedule)</MudText>
     </MudCardContent>
 </MudCard>
 
 @code {
     [Parameter]
-    public Instance Instance { get; set; }
+    public Instance Instance { get; set; } = default!;
+
+    [Inject] IInstanceService _instanceService { get; set; } = default!;
+    [Inject] ICronService _cronService { get; set; } = default!;
+
+    private bool IsHidden { get; set; } = false;
+    private string CronDescription { get; set; } = default!;
+
+
+    private async Task DeleteInstance()
+    {
+        bool? isDeleteCharacter = await DialogService.ShowMessageBox(
+            "Удалить инстанс?",
+            "Все данные о инстансе будут стерты безвозвратно",
+            yesText: "Удалить", cancelText: "Отмена");
+
+        if (isDeleteCharacter ?? false)
+        {
+            var result = await _instanceService.RemoveInstance(i => i.Name == Instance.Name);
+            Instance.Name = result;
+
+            IsHidden = true;
+            StateHasChanged();
+        }
+    }
 }

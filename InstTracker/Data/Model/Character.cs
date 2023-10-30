@@ -6,6 +6,6 @@
 
         public string Name { get; set; }
 
-        public virtual List<InstanceHistory> InstancesHistory { get; set; }
+        public virtual List<InstanceHistory> InstancesHistory { get; set; } = new();
     }
 }

@@ -10,6 +10,7 @@ namespace InstTracker.Services
             services.AddScoped<ICharacterService, CharacterService>();
             services.AddScoped<IInstanceService, InstanceService>();
             services.AddScoped<ICronService, CronService>();
+            services.AddScoped<IHistoryService, HistoryService>();
 
             return services;
         }

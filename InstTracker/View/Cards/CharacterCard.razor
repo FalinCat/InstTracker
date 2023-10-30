@@ -1,0 +1,40 @@
+﻿@using InstTracker.Services.Extensions;
+@inject ICharacterService _characterService
+@inject IDialogService DialogService
+@inject NavigationManager Navigation
+
+<MudCard Icon="@Icons.Material.Filled.PersonPin" hidden="@IsHidden">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@Character.Name</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" Color="Color.Default" OnClick="DeleteCharacter" />
+        </CardHeaderActions>
+    </MudCardHeader>
+</MudCard>
+
+@code {
+    [Parameter]
+    public Character Character { get; set; } = default!;
+    private bool IsHidden { get; set; } = false;
+
+    private async Task DeleteCharacter()
+    {
+        bool? isDeleteCharacter = await DialogService.ShowMessageBox(
+            "Удалить персонажа?",
+            "Все данные о персонаже будут стерты безвозвратно",
+            yesText: "Удалить", cancelText: "Отмена");
+
+        if (isDeleteCharacter ?? false)
+        {
+            var result = await _characterService.RemoveCharacter(c => c.Name == Character.Name);
+            Character.Name = result;
+
+            IsHidden = true;
+            StateHasChanged();
+
+            Navigation.ReloadPage();
+        }
+    }
+}

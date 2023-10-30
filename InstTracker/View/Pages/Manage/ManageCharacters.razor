@@ -1,7 +1,4 @@
 ﻿@page "/manage-characters"
-@inject ICharacterService _characterService
-
-
 
 <MudStack Justify="Justify.Center">
     <MudButton Variant="Variant.Filled"
@@ -13,7 +10,9 @@
     <MudList Clickable="true">
         @foreach (var ch in characters)
         {
-            <MudListItem Text="@ch.Name" Icon="@Icons.Material.Filled.PersonPin">
+            var link = $"/char/{ch.Name}";
+            <MudListItem Href="@link">
+                <CharacterCard Character="ch" />
             </MudListItem>
         }
 
@@ -21,7 +20,10 @@
     </MudList>
 </MudStack>
 @code {
-    private List<Character> characters;
+    [Inject]
+    public ICharacterService _characterService { get; set; } = default!;
+
+    private List<Character> characters = default!;
     
     protected async override Task OnInitializedAsync()
     {

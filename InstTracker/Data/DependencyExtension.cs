@@ -1,15 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InstTracker.Data
 {
     internal static class DependencyExtension
     {
-        public static IServiceProvider AddDbInitializer(this IServiceProvider serviceProvider) {
+        public static IServiceProvider AddDbInitializer(this IServiceProvider serviceProvider)
+        {
             using var scope = serviceProvider.CreateScope();
             var services = scope.ServiceProvider;
             try
@@ -19,10 +15,8 @@ namespace InstTracker.Data
             }
             catch (Exception ex)
             {
-
                 throw;
             }
-
 
             return services;
         }

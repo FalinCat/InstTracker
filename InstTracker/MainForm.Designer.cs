@@ -35,17 +35,19 @@
             // 
             blazorWebView1.Dock = DockStyle.Fill;
             blazorWebView1.Location = new Point(0, 0);
+            blazorWebView1.Margin = new Padding(3, 2, 3, 2);
             blazorWebView1.Name = "blazorWebView1";
-            blazorWebView1.Size = new Size(536, 716);
+            blazorWebView1.Size = new Size(469, 758);
             blazorWebView1.TabIndex = 0;
             blazorWebView1.Text = "blazorWebView1";
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(536, 716);
+            ClientSize = new Size(469, 758);
             Controls.Add(blazorWebView1);
+            Margin = new Padding(3, 2, 3, 2);
             Name = "MainForm";
             Text = "Instance Tracker";
             ResumeLayout(false);

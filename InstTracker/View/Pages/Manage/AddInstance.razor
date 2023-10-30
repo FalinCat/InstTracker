@@ -1,0 +1,44 @@
+﻿@page "/add-instance"
+@inherits ManageInstances
+@using System.ComponentModel.DataAnnotations;
+@using Microsoft.AspNetCore.Components.Forms
+@using NCrontab;
+
+@inject NavigationManager Navigation
+
+
+<EditForm Model="@Instance" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+
+    <MudStack>
+        <MudTextField @bind-Value="Instance.Name" Label="Введите название инстанса" HelperText="@nameResult" Variant="Variant.Filled" />
+        <MudTextField @bind-Value="Instance.Schedule" Label="Введите расписание (cron) инстанса" HelperText="@scheduleResult" Variant="Variant.Filled" />
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Добавить инстанс</MudButton>
+    </MudStack>
+</EditForm>
+
+@code {
+    [Required]
+    private Instance Instance = new Instance();
+    private string nameResult { get; set; } = default!;
+    private string scheduleResult { get; set; } = default!;
+
+    private async Task OnValidSubmit(EditContext context)
+    {
+        var cronValid = CrontabSchedule.TryParse(Instance.Schedule);
+        if (cronValid == null)
+        {
+            scheduleResult = "Расписание не валидно";
+            return;
+        }
+
+        nameResult = await _instanceService.AddInstance(Instance.Name, Instance.Schedule);
+
+        if (nameResult.Contains("добавлен"))
+        {
+            scheduleResult = string.Empty;
+            await Task.Delay(1500);
+            Navigation.NavigateTo("/manage-instances", true);
+        }
+    }
+}
