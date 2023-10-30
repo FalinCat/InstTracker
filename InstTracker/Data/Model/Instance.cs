@@ -8,6 +8,8 @@
 
         public string Schedule { get; set; }
 
+        public bool isHidden { get; set; } = false;
+
         public virtual List<InstanceHistory> InstancesHistory { get; set; } = new();
     }
 }

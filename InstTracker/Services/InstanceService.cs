@@ -4,6 +4,7 @@ using InstTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using NCrontab;
 using System.Linq.Expressions;
+using System.Xml.Linq;
 
 namespace InstTracker.Services
 {
@@ -21,6 +22,20 @@ namespace InstTracker.Services
 
         public async Task<Instance> Find(Expression<Func<Instance, bool>> predicate) =>
             await _dbContext.Instances.FirstOrDefaultAsync(predicate);
+
+        public async Task<string> SetHiddenState(string instanceName, bool newState)
+        {
+            var instance = await _dbContext.Instances.FirstOrDefaultAsync(i => i.Name == instanceName);
+            if (instance == null)
+            {
+                return $"Инстанс с названием {instanceName} не найден";
+            }
+
+            instance.isHidden = newState;
+            await _dbContext.SaveChangesAsync();
+
+            return "Сделано";
+        }
 
         public async Task<string> AddInstance(string name, string schedule)
         {

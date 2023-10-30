@@ -2,18 +2,25 @@
 
 @inject IDialogService DialogService
 
-<MudCard Icon="@Icons.Material.Filled.PersonPin" hidden="@IsHidden">
+<MudCard Icon="@Icons.Material.Filled.PersonPin" hidden="@isHidden">
     <MudCardHeader>
         <CardHeaderContent>
             <MudText Typo="Typo.h6">@Instance.Name</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" Color="Color.Default" OnClick="DeleteInstance" />
+            <MudStack>
+            <MudSwitch T="bool" CheckedChanged="Switched" Color="Color.Primary"
+                Checked="@Instance.isHidden" Label="Скрыть"></MudSwitch>
+            </MudStack>
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
         <MudText Typo="Typo.body2">Откаты: @_cronService.GetDescribedCronNextRun(Instance.Schedule)</MudText>
     </MudCardContent>
+
+    <MudCardActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="DeleteInstance">Удалить</MudButton>
+    </MudCardActions>
 </MudCard>
 
 @code {
@@ -23,15 +30,23 @@
     [Inject] IInstanceService _instanceService { get; set; } = default!;
     [Inject] ICronService _cronService { get; set; } = default!;
 
-    private bool IsHidden { get; set; } = false;
     private string CronDescription { get; set; } = default!;
+    private bool isHidden = false;
 
+    public async void Switched()
+    {
+        Instance.isHidden = !Instance.isHidden;
+
+        await _instanceService.SetHiddenState(Instance.Name, Instance.isHidden);
+
+        StateHasChanged();
+    }
 
     private async Task DeleteInstance()
     {
         bool? isDeleteCharacter = await DialogService.ShowMessageBox(
             "Удалить инстанс?",
-            "Все данные о инстансе будут стерты безвозвратно",
+            "Все данные о инстансе будут стерты",
             yesText: "Удалить", cancelText: "Отмена");
 
         if (isDeleteCharacter ?? false)
@@ -39,7 +54,7 @@
             var result = await _instanceService.RemoveInstance(i => i.Name == Instance.Name);
             Instance.Name = result;
 
-            IsHidden = true;
+            isHidden = true;
             StateHasChanged();
         }
     }

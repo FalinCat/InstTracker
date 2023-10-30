@@ -12,5 +12,6 @@ namespace InstTracker.Services.Interfaces
         Task<List<Instance>> GetAllInstancesAsync();
 
         Task<string> RemoveInstance(Expression<Func<Instance, bool>> predicate);
+        Task<string> SetHiddenState(string instanceName, bool newState);
     }
 }

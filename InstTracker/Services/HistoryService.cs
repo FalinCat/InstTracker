@@ -26,7 +26,7 @@ namespace InstTracker.Services
             }
 
             List<Instance> undoneInstances = new List<Instance>();
-            foreach (var inst in await _dbContext.Instances.AsNoTracking().ToListAsync())
+            foreach (var inst in await _dbContext.Instances.Where(x => x.isHidden == false).AsNoTracking().ToListAsync())
             {
                 var lastRun = await _dbContext.InstancesHistory
                     .Where(hist => hist.InstanceId == inst.Id && hist.CharacterId == character.Id)
