@@ -63,7 +63,7 @@ namespace InstTracker.Services
             try
             {
                 characterEntity.InstancesHistory.Add(new InstanceHistory()
-                { CharacterId = characterEntity.Id, InstanceId = instanceEntity.Id, DateDone = DateTime.Now });
+                { CharacterId = characterEntity.Id, InstanceId = instanceEntity.Id, DateDone = DateTime.UtcNow });
 
                 await _dbContext.SaveChangesAsync();
                 return "пройдено";
