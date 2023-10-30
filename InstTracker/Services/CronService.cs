@@ -21,9 +21,8 @@ namespace InstTracker.Services
             var nextUTCTime = CrontabSchedule
                 .Parse(cron)
                 .GetNextOccurrence(DateTime.UtcNow);
-            var localNextHitTime = TimeZoneInfo.ConvertTimeFromUtc(nextUTCTime, TimeZoneInfo.Local);
 
-            DateTime lastRun = localNextHitTime;
+            DateTime lastRun = nextUTCTime;
 
             for (int i = 1; i < 14; i++)
             {
@@ -31,7 +30,7 @@ namespace InstTracker.Services
                     .Parse(cron)
                     .GetNextOccurrence(DateTime.Now.AddDays(-i));
 
-                if (lastHit < localNextHitTime)
+                if (lastHit < nextUTCTime)
                 {
                     lastRun = lastHit; break;
                 }

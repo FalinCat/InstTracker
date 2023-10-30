@@ -33,6 +33,7 @@ namespace InstTracker.Services
                     .OrderByDescending(x => x.DateDone)
                     .Select(hist => hist.DateDone)
                     .FirstOrDefaultAsync();
+                lastRun = new DateTime(lastRun.Ticks, DateTimeKind.Utc);
 
                 var lastHit = _cronService.GetLastHit(inst.Schedule);
 
