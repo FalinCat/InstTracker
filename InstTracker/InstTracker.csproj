@@ -22,6 +22,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebView.WindowsForms" Version="7.0.96" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="MudBlazor" Version="6.11.0" />
     <PackageReference Include="NCrontab" Version="3.3.3" />

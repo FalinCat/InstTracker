@@ -1,0 +1,8 @@
+﻿<MudText>@eventName: @nextHit.ToShortTimeString()</MudText>
+<MudText>До ивента: @timeRemaining.ToHumanReadableString()</MudText>
+
+@code {
+    [Parameter] public string eventName { get; set; } = string.Empty;
+    [Parameter] public DateTime nextHit { get; set; }
+    [Parameter] public TimeSpan timeRemaining { get; set; }
+}

@@ -6,15 +6,24 @@ namespace InstTracker.Services
 {
     public class CronService : ICronService
     {
-        public DateTime GetNextHit(string cron) =>
-            CrontabSchedule.Parse(cron).GetNextOccurrence(DateTime.Now);
+        public DateTime GetNextHit(string cron)
+        {
+            var nextUtcHit = CrontabSchedule
+                .Parse(cron)
+                .GetNextOccurrence(DateTime.UtcNow);
+            var nextLocalTime = TimeZoneInfo.ConvertTimeFromUtc(nextUtcHit, TimeZoneInfo.Local);
+
+            return nextLocalTime;
+        }
 
         public DateTime GetLastHit(string cron)
         {
-            var nextHit = CrontabSchedule
+            var nextUTCTime = CrontabSchedule
                 .Parse(cron)
-                .GetNextOccurrence(DateTime.Now);
-            DateTime lastRun = nextHit;
+                .GetNextOccurrence(DateTime.UtcNow);
+            var localNextHitTime = TimeZoneInfo.ConvertTimeFromUtc(nextUTCTime, TimeZoneInfo.Local);
+
+            DateTime lastRun = localNextHitTime;
 
             for (int i = 1; i < 14; i++)
             {
@@ -22,7 +31,7 @@ namespace InstTracker.Services
                     .Parse(cron)
                     .GetNextOccurrence(DateTime.Now.AddDays(-i));
 
-                if (lastHit < nextHit)
+                if (lastHit < localNextHitTime)
                 {
                     lastRun = lastHit; break;
                 }
@@ -40,8 +49,8 @@ namespace InstTracker.Services
                 {
                     DayOfWeekStartIndexZero = true,
                     Use24HourTimeFormat = true,
-                    Locale = "ru"
-                }).Replace("только в", "");
+                    Locale = "ru",
+                })[18..];
             }
             catch (Exception ex)
             {

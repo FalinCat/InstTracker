@@ -8,6 +8,7 @@ namespace InstTracker.Data
         public DbSet<Character> Characters { get; set; }
         public DbSet<Instance> Instances { get; set; }
         public DbSet<InstanceHistory> InstancesHistory { get; set; }
+        public DbSet<EventEntity> Events { get; set; }
 
         public AppDbContext(DbContextOptions options) : base(options)
         {

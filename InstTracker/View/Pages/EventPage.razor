@@ -1,0 +1,61 @@
+﻿@page "/events"
+
+@using System.Timers
+@using InstTracker.Services;
+
+<MudStack Class="ma-6">
+    <MudText>Следующие ивенты:</MudText>
+    <MudDivider />
+
+
+    <MudList>
+        @foreach (EventCardInfo evt in eventCardInfos)
+        {
+            <MudListItem>
+                <NextEventCard eventName="@evt.Name" nextHit="@evt.NextHit" timeRemaining="@evt.TimeRemaining" />
+            </MudListItem>
+        }
+
+
+    </MudList>
+
+
+</MudStack>
+@code {
+    [Inject] ICronService _cronService { get; set; } = default!;
+    [Inject] IEventService _eventService { get; set; } = default!;
+
+    private List<EventCardInfo> eventCardInfos = new List<EventCardInfo>();
+
+
+
+    private Timer timer = new(1000);
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Render();
+
+        timer.Elapsed += (sender, eventArgs) => Render();
+        timer.Start();
+    }
+
+
+
+    private async Task Render()
+    {
+        eventCardInfos.Clear();
+        foreach (EventType t in Enum.GetValues(typeof(EventType)))
+        {
+            var eventInfo = await _eventService.GetEventInfo(t);
+
+            eventCardInfos.Add(eventInfo);
+        }
+
+        eventCardInfos = eventCardInfos.OrderBy(x => x.TimeRemaining).ToList();
+
+        _ = InvokeAsync(() => StateHasChanged());
+
+
+    }
+}

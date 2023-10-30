@@ -11,6 +11,7 @@ namespace InstTracker.Services
             services.AddScoped<IInstanceService, InstanceService>();
             services.AddScoped<ICronService, CronService>();
             services.AddScoped<IHistoryService, HistoryService>();
+            services.AddScoped<IEventService, EventService>();
 
             return services;
         }

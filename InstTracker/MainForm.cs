@@ -20,6 +20,10 @@ namespace InstTracker
             {
                 options.UseSqlite("Data Source=InstancesHistory.db");
             });
+            builder.Services.AddMemoryCache(options =>
+            {
+                options.ExpirationScanFrequency = TimeSpan.FromMinutes(10);
+            });
 
             builder.Services.AddWindowsFormsBlazorWebView();
             builder.Services.AddMudBlazorDialog();
