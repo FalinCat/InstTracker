@@ -65,7 +65,7 @@ namespace InstTracker.Data
             {
                 new EventEntity() { Name = "TvT", Schedule="50 6,9,14 * * *" },
                 new EventEntity() { Name = "TvT", Schedule="30 1,12,17,19,23 * * *" },
-                new EventEntity() { Name = "TvT", Schedule="30 16,19,20 * * *" },
+                new EventEntity() { Name = "TvT", Schedule="30 16,18,20 * * *" },
 
                 new EventEntity() { Name = "Мясорубка", Schedule="50 4,8,16,20 * * *" },
 
