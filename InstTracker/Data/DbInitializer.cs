@@ -16,7 +16,7 @@ namespace InstTracker.Data
             var instances = new List<Instance>()
             {
                 new Instance() {Name = "Логово Крофинов", Schedule = "30 3 * * 1,5"},
-                new Instance() {Name = "Трон Падшего Императора", Schedule = "30 3 * * 3,5"},
+                new Instance() {Name = "Трон Падшего Императора", Schedule = "30 3 * * 2,4"},
                 new Instance() {Name = "Алтарь Балрога", Schedule = "30 3 * * 3,6"},
                 new Instance() {Name = "Обитель Теней", Schedule = "30 3 * * 4,6"},
                 new Instance() {Name = "Святилище Печатей", Schedule = "30 3 * * 2,6"},
