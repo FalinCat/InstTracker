@@ -1,0 +1,93 @@
+﻿@page "/debug"
+@using InstTracker.Data;
+
+<MudText Align="Align.Center" Class="mt-4">Отладка</MudText>
+
+
+<MudText Align="Align.Left" Class="mt-4">Часовые пояса</MudText>
+<MudStack>
+    <MudText Align="Align.Left">DisplayName: @timezoneDisplayName </MudText>
+    <MudText Align="Align.Left">StandardName: @timezoneStandardName </MudText>
+    <MudText Align="Align.Left">BaseUtcOffset: @timezoneOffset </MudText>
+</MudStack>
+
+
+<MudText Align="Align.Center" Class="mt-4">Прочитанные инстансы (время cron в UTC)</MudText>
+<MudTable Items="@Instances" Hover="true" Breakpoint="Breakpoint.None" Filter="new Func<Instance,bool>(FilterFuncInstance)" @bind-SelectedItem="selectedInstance">
+    <ToolBarContent>
+        <MudTextField @bind-Value="searchStringInstance" Placeholder="Поиск" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Schedule</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Schedule">@context.Schedule</MudTd>
+    </RowTemplate>
+</MudTable>
+
+
+<MudText Align="Align.Center" Class="mt-4">Прочитанные ивенты (время cron в UTC)</MudText>
+<MudTable Items="@Events" Hover="true" Breakpoint="Breakpoint.None" Filter="new Func<EventEntity,bool>(FilterFuncEvent)" @bind-SelectedItem="selectedEvent">
+    <ToolBarContent>
+        <MudTextField @bind-Value="searchStringEvent" Placeholder="Поиск" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Schedule</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Schedule">@context.Schedule</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    string timezoneDisplayName = TimeZoneInfo.Local.DisplayName;
+    string timezoneOffset = TimeZoneInfo.Local.BaseUtcOffset.ToString();
+    string timezoneStandardName = TimeZoneInfo.Local.StandardName;
+
+    [Inject] AppDbContext _context { get; set; } = default!;
+
+    List<EventEntity> Events = new List<EventEntity>();
+    List<Instance> Instances = new List<Instance>();
+
+    private string searchStringEvent = "";
+    private string searchStringInstance = "";
+    private EventEntity selectedEvent = null;
+    private Instance selectedInstance = null;
+    private HashSet<EventEntity> selectedEvents = new HashSet<EventEntity>();
+    private HashSet<Instance> selectedInstances = new HashSet<Instance>();
+
+    protected override Task OnInitializedAsync()
+    {
+        Events = _context.Events.ToList();
+        Instances = _context.Instances.ToList();
+        return base.OnInitializedAsync();
+    }
+
+    private bool FilterFuncEvent(EventEntity element) => FilterFuncEvent(element, searchStringEvent);
+    private bool FilterFuncInstance(Instance element) => FilterFuncInstance(element, searchStringInstance);
+
+    private bool FilterFuncEvent(EventEntity element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    }
+
+    private bool FilterFuncInstance(Instance element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    }
+
+}

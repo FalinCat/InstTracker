@@ -8,11 +8,6 @@ namespace InstTracker.Data
         {
             context.Database.EnsureCreated();
 
-            if (context.Instances.Any())
-            {
-                return;
-            }
-
             var instances = new List<Instance>()
             {
                 new Instance() {Name = "Логово Крофинов", Schedule = "30 3 * * 1,5"},
@@ -33,8 +28,8 @@ namespace InstTracker.Data
                 new Instance() {Name = "Арена Младших Богов", Schedule = "30 3 * * 3,6"},
 
                 new Instance() {Name = "Октавис - Битва с Октависом", Schedule = "30 3 * * 3,6"},
-                new Instance() {Name = "Кимерианы обычный", Schedule = "30 3 * * 3,6"},
-                new Instance() {Name = "Кимерианы экстрим", Schedule = "30 3 * * 3,6"},
+                new Instance() {Name = "Кимериан обычный", Schedule = "30 3 * * 3,6"},
+                new Instance() {Name = "Кимериан экстрим", Schedule = "30 3 * * 3,6"},
                 new Instance() {Name = "Истхина - Обитель Истхины", Schedule = "30 3 * * 3,6"},
                 new Instance() {Name = "Древний Лабиринт Картии", Schedule = "30 3 * * 3,6"},
                 new Instance() {Name = "Байлор", Schedule = "30 3 * * 3,6"},
@@ -58,14 +53,29 @@ namespace InstTracker.Data
                 new Instance() {Name = "Занния, Королева Пиратов", Schedule = "30 3 * * 1,5"},
             };
 
-            context.Instances.AddRange(instances);
+            if (!context.Instances.Any())
+            {
+                context.Instances.AddRange(instances);
+            }
+            else
+            {
+                foreach (var inst in context.Instances)
+                {
+                    var instEntity = instances.Where(x => x.Name == inst.Name).FirstOrDefault();
+                    if (instEntity is not null)
+                    {
+                        inst.Schedule = instEntity.Schedule;
+                    }
+                }
+            }
+
             context.SaveChanges();
 
             var events = new List<EventEntity>()
             {
-                new EventEntity() { Name = "TvT", Schedule="50 6,9,14 * * *" },
-                new EventEntity() { Name = "TvT", Schedule="30 1,12,17,19,23 * * *" },
-                new EventEntity() { Name = "TvT", Schedule="30 16,18,20 * * *" },
+                new EventEntity() { Name = "Majestic TvT", Schedule="50 6,9,14 * * *" },
+                new EventEntity() { Name = "Imperial TvT", Schedule="30 1,12,17,19,23 * * *" },
+                new EventEntity() { Name = "Royal TvT", Schedule="30 16,18,20 * * *" },
 
                 new EventEntity() { Name = "Мясорубка", Schedule="50 4,8,16,20 * * *" },
 
@@ -76,7 +86,23 @@ namespace InstTracker.Data
 
                 new EventEntity() { Name = "Сокровища Тову", Schedule="20 0,4,8,11,13,17,19,21 * * *" },
             };
-            context.Events.AddRange(events);
+
+            if (!context.Events.Any())
+            {
+                context.Events.AddRange(events);
+            }
+            else
+            {
+                foreach (var evt in context.Events)
+                {
+                    var evtEntity = events.Where(x => x.Name == evt.Name).FirstOrDefault();
+                    if (evtEntity is not null)
+                    {
+                        evt.Schedule = evtEntity.Schedule;
+                    }
+                }
+            }
+
             context.SaveChanges();
         }
     }

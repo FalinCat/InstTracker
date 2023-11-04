@@ -8,7 +8,9 @@ namespace InstTracker.Services
 {
     public enum EventType
     {
-        TvT,
+        MajesticTvT,
+        ImperialTvT,
+        RoyalTvT,
         Massacre,
         Elpi,
         SPC,
